@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iqbal — Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Cinematic Grain Overlay -->
+    <div class="grain-overlay"></div>
+    <!-- Animated Mesh Gradient -->
+    <div class="mesh-gradient"></div>
+
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="loader">
+            <div class="loader-ring"></div>
+            <div class="loader-ring loader-ring-2"></div>
+            <div class="loader-ring loader-ring-3"></div>
+            <div class="loader-text">Entering the Universe<span class="loader-dots"><span>.</span><span>.</span><span>.</span></span></div>
+            <div class="loader-progress"><div class="loader-progress-bar"></div></div>
+        </div>
+    </div>
+
+    <!-- Custom Cursor -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-ring"></div>
+
+    <!-- Three.js Canvas -->
+    <div id="three-canvas"></div>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <a href="#hero" class="nav-logo"></a>
+        <div class="nav-links">
+            <a href="#hero" class="nav-link active">Home</a>
+            <a href="#about" class="nav-link">About</a>
+            <a href="#skills" class="nav-link">Skills</a>
+            <a href="#projects" class="nav-link">Projects</a>
+            <a href="#achievements" class="nav-link">Achievements</a>
+            <a href="#contact" class="nav-link">Contact</a>
+        </div>
+        <div class="nav-hamburger"><span></span><span></span><span></span></div>
+    </nav>
+
+    <main>
+        <!-- Hero -->
+        <section id="hero" class="section">
+            <div class="hero-backdrop"></div>
+            <div class="hero-content">
+                <div class="hero-greeting">Assalamualaikum, I'm</div>
+                <h1 id="hero-name" class="glitch-text" data-text="Iqbal"></h1>
+                <p id="hero-title" class="hero-subtitle"></p>
+                <div class="hero-cta">
+                    <a href="#projects" class="btn btn-primary magnetic"><span class="btn-text">View My Work</span><span class="btn-glow"></span></a>
+                    <a href="#contact" class="btn btn-outline magnetic"><span class="btn-text">Get In Touch</span></a>
+                </div>
+            </div>
+            <div class="scroll-indicator"><span>Scroll to Explore</span><div class="scroll-arrow"></div></div>
+        </section>
+
+        <div class="section-divider"><div class="divider-line"></div></div>
+
+        <!-- About -->
+        <section id="about" class="section">
+            <div class="section-container">
+                <h2 class="section-title"><span class="title-number">01.</span> About Me</h2>
+                <div class="about-content">
+                    <div class="about-image-container">
+                        <div class="about-image-frame">
+                            <img id="about-photo" src="" alt="Profile">
+                            <div class="image-glitch-overlay"></div>
+                        </div>
+                        <div class="image-decoration"></div>
+                    </div>
+                    <div class="about-text">
+                        <p id="about-bio"></p>
+                        <div class="about-socials" id="about-socials"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider"><div class="divider-line"></div></div>
+
+        <!-- Skills -->
+        <section id="skills" class="section">
+            <div class="section-container">
+                <h2 class="section-title"><span class="title-number">02.</span> Skills & Expertise</h2>
+                <div id="skills-container" class="skills-grid"></div>
+            </div>
+        </section>
+
+        <div class="section-divider"><div class="divider-line"></div></div>
+
+        <!-- Projects -->
+        <section id="projects" class="section">
+            <div class="section-container">
+                <h2 class="section-title"><span class="title-number">03.</span> Projects</h2>
+                <div id="projects-container" class="projects-grid"></div>
+            </div>
+        </section>
+
+        <div class="section-divider"><div class="divider-line"></div></div>
+
+        <!-- Achievements -->
+        <section id="achievements" class="section">
+            <div class="section-container">
+                <h2 class="section-title"><span class="title-number">04.</span> Achievements</h2>
+                <div id="achievements-container" class="achievements-grid"></div>
+            </div>
+        </section>
+
+        <div class="section-divider"><div class="divider-line"></div></div>
+
+        <!-- Contact -->
+        <section id="contact" class="section">
+            <div class="section-container">
+                <h2 class="section-title"><span class="title-number">05.</span> Get In Touch</h2>
+                <div class="contact-content">
+                    <div class="contact-info">
+                        <p class="contact-tagline">Have a project in mind or just want to say hello?<br>I'd love to hear from you.</p>
+                        <div id="contact-email" class="contact-email-display"></div>
+                    </div>
+                    <form id="contact-form" class="contact-form">
+                        <div class="form-group">
+                            <input type="text" name="name" id="cf-name" placeholder=" " required>
+                            <label for="cf-name">Your Name</label>
+                            <div class="input-line"></div>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" name="email" id="cf-email" placeholder=" " required>
+                            <label for="cf-email">Your Email</label>
+                            <div class="input-line"></div>
+                        </div>
+                        <div class="form-group">
+                            <textarea name="message" id="cf-msg" placeholder=" " rows="5" required></textarea>
+                            <label for="cf-msg">Your Message</label>
+                            <div class="input-line"></div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-submit magnetic">
+                            <span class="btn-text">Send Message</span><span class="btn-glow"></span>
+                        </button>
+                        <div id="form-status" class="form-status"></div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>Designed & Built by <span id="footer-name"></span></p>
+            <p class="footer-year"></p>
+        </div>
+    </footer>
+
+    <!-- Project Modal -->
+    <div id="project-modal" class="modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <button class="modal-close">&times;</button>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="js/three-scene.js"></script>
+    <script src="js/particles.js"></script>
+    <script src="js/animations.js"></script>
+    <script src="js/content-loader.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

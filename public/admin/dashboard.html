@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Portfolio</title>
+    <link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body class="dashboard-body" style="display: none;"> <!-- Hidden until auth check passes -->
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Admin Portal</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-target="dashboard">📊 Dashboard</a>
+                <a href="#" class="nav-item" data-target="profile">👤 Profile</a>
+                <a href="#" class="nav-item" data-target="projects">📁 Projects</a>
+                <a href="#" class="nav-item" data-target="skills">⚡ Skills</a>
+                <a href="#" class="nav-item" data-target="achievements">🏆 Achievements</a>
+                <a href="#" class="nav-item" data-target="messages">✉️ Messages <span id="unread-badge" class="badge hidden">0</span></a>
+                <div class="spacer"></div>
+                <a href="#" class="nav-item text-danger" id="logout-btn">🚪 Logout</a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Panel -->
+            <section id="panel-dashboard" class="panel active">
+                <header class="panel-header">
+                    <h1>Dashboard Overview</h1>
+                </header>
+                <div class="count-cards-grid">
+                    <div class="count-card">
+                        <div class="card-icon">📁</div>
+                        <div class="card-info">
+                            <div class="card-count" id="count-projects">0</div>
+                            <div class="card-label">Total Projects</div>
+                        </div>
+                    </div>
+                    <div class="count-card">
+                        <div class="card-icon">⚡</div>
+                        <div class="card-info">
+                            <div class="card-count" id="count-skills">0</div>
+                            <div class="card-label">Total Skills</div>
+                        </div>
+                    </div>
+                    <div class="count-card">
+                        <div class="card-icon">🏆</div>
+                        <div class="card-info">
+                            <div class="card-count" id="count-achievements">0</div>
+                            <div class="card-label">Achievements</div>
+                        </div>
+                    </div>
+                    <div class="count-card">
+                        <div class="card-icon">✉️</div>
+                        <div class="card-info">
+                            <div class="card-count" id="count-messages">0</div>
+                            <div class="card-label">Total Messages</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Profile Panel -->
+            <section id="panel-profile" class="panel">
+                <header class="panel-header">
+                    <h1>Profile Management</h1>
+                </header>
+                <div class="form-container card">
+                    <form id="profile-form">
+                        <div class="form-group">
+                            <label>Name</label>
+                            <input type="text" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Title</label>
+                            <input type="text" name="title" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Bio</label>
+                            <textarea name="bio" rows="5" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Photo URL</label>
+                            <div class="upload-group">
+                                <input type="text" name="photo">
+                                <input type="file" id="profile-photo-upload" accept="image/*">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label>GitHub URL</label>
+                            <input type="url" name="github">
+                        </div>
+                        <div class="form-group">
+                            <label>LinkedIn URL</label>
+                            <input type="url" name="linkedin">
+                        </div>
+                        <div class="form-group">
+                            <label>Twitter URL</label>
+                            <input type="url" name="twitter">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Profile</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Projects Panel -->
+            <section id="panel-projects" class="panel">
+                <header class="panel-header flex-between">
+                    <h1>Projects</h1>
+                    <button class="btn btn-primary" onclick="adminApp.showProjectForm()">+ Add Project</button>
+                </header>
+                <div class="table-container card">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Tech Stack</th>
+                                <th>Featured</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="projects-tbody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Skills Panel -->
+            <section id="panel-skills" class="panel">
+                <header class="panel-header flex-between">
+                    <h1>Skills</h1>
+                    <button class="btn btn-primary" onclick="adminApp.showSkillForm()">+ Add Skill</button>
+                </header>
+                <div class="table-container card">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Icon</th>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Proficiency</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="skills-tbody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Achievements Panel -->
+            <section id="panel-achievements" class="panel">
+                <header class="panel-header flex-between">
+                    <h1>Achievements</h1>
+                    <button class="btn btn-primary" onclick="adminApp.showAchievementForm()">+ Add Achievement</button>
+                </header>
+                <div class="table-container card">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Icon</th>
+                                <th>Title</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="achievements-tbody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Messages Panel -->
+            <section id="panel-messages" class="panel">
+                <header class="panel-header">
+                    <h1>Messages</h1>
+                </header>
+                <div class="messages-list" id="messages-list"></div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <!-- Project Modal -->
+    <div id="modal-project" class="modal">
+        <div class="modal-content card">
+            <header class="modal-header">
+                <h2 id="modal-project-title">Add Project</h2>
+                <button class="btn-close" onclick="adminApp.closeModal('project')">×</button>
+            </header>
+            <form id="form-project">
+                <input type="hidden" name="id">
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" name="title" required>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="description" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Image URL</label>
+                    <div class="upload-group">
+                        <input type="text" name="image" required>
+                        <input type="file" id="project-image-upload" accept="image/*">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Tech Stack (comma separated or JSON array string)</label>
+                    <input type="text" name="tech_stack" required>
+                </div>
+                <div class="form-group">
+                    <label>Live URL</label>
+                    <input type="text" name="live_url">
+                </div>
+                <div class="form-group">
+                    <label>GitHub URL</label>
+                    <input type="text" name="github_url">
+                </div>
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" name="featured" id="project-featured">
+                    <label for="project-featured">Featured</label>
+                </div>
+                <div class="form-group">
+                    <label>Display Order</label>
+                    <input type="number" name="display_order" value="0">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="adminApp.closeModal('project')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Project</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Skill Modal -->
+    <div id="modal-skill" class="modal">
+        <div class="modal-content card">
+            <header class="modal-header">
+                <h2 id="modal-skill-title">Add Skill</h2>
+                <button class="btn-close" onclick="adminApp.closeModal('skill')">×</button>
+            </header>
+            <form id="form-skill">
+                <input type="hidden" name="id">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <input type="text" name="category" required>
+                </div>
+                <div class="form-group">
+                    <label>Proficiency (0-100)</label>
+                    <input type="range" name="proficiency" min="0" max="100" required>
+                    <span id="skill-prof-val">50%</span>
+                </div>
+                <div class="form-group">
+                    <label>Icon (emoji or URL)</label>
+                    <input type="text" name="icon" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="adminApp.closeModal('skill')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Skill</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Achievement Modal -->
+    <div id="modal-achievement" class="modal">
+        <div class="modal-content card">
+            <header class="modal-header">
+                <h2 id="modal-achievement-title">Add Achievement</h2>
+                <button class="btn-close" onclick="adminApp.closeModal('achievement')">×</button>
+            </header>
+            <form id="form-achievement">
+                <input type="hidden" name="id">
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" name="title" required>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="description" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Icon (emoji or URL)</label>
+                    <input type="text" name="icon" required>
+                </div>
+                <div class="form-group">
+                    <label>Date</label>
+                    <input type="text" name="date" placeholder="e.g. 2023 or Oct 2023" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="adminApp.closeModal('achievement')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Achievement</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="/admin/js/admin.js"></script>
+</body>
+</html>
