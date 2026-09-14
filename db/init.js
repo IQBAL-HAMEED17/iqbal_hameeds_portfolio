@@ -1,14 +1,11 @@
-const Database = require('better-sqlite3');
+const client = require('./client');
 const bcryptjs = require('bcryptjs');
-const path = require('path');
-const fs = require('fs');
 
-function initDB() {
-  const dbPath = path.join(__dirname, 'portfolio.db');
-  const db = new Database(dbPath);
+async function initDB() {
+  console.log("Initializing database tables and seeding...");
 
   // Profile table
-  db.prepare(`
+  await client.execute(`
     CREATE TABLE IF NOT EXISTS profile (
       id INTEGER PRIMARY KEY,
       name TEXT DEFAULT 'Iqbal',
@@ -20,10 +17,10 @@ function initDB() {
       linkedin TEXT DEFAULT '',
       twitter TEXT DEFAULT ''
     )
-  `).run();
+  `);
 
   // Projects table
-  db.prepare(`
+  await client.execute(`
     CREATE TABLE IF NOT EXISTS projects (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       title TEXT NOT NULL,
@@ -36,10 +33,10 @@ function initDB() {
       display_order INTEGER DEFAULT 0,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
-  `).run();
+  `);
 
   // Achievements table
-  db.prepare(`
+  await client.execute(`
     CREATE TABLE IF NOT EXISTS achievements (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       title TEXT NOT NULL,
@@ -48,10 +45,10 @@ function initDB() {
       date TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
-  `).run();
+  `);
 
   // Skills table
-  db.prepare(`
+  await client.execute(`
     CREATE TABLE IF NOT EXISTS skills (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
@@ -60,10 +57,10 @@ function initDB() {
       icon TEXT DEFAULT '⚡',
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
-  `).run();
+  `);
 
   // Messages table
-  db.prepare(`
+  await client.execute(`
     CREATE TABLE IF NOT EXISTS messages (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT,
@@ -72,37 +69,55 @@ function initDB() {
       read INTEGER DEFAULT 0,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
-  `).run();
+  `);
 
   // Admin table
-  db.prepare(`
+  await client.execute(`
     CREATE TABLE IF NOT EXISTS admin (
       id INTEGER PRIMARY KEY,
       username TEXT UNIQUE,
       password TEXT
     )
-  `).run();
+  `);
 
   // Seed Profile
-  db.prepare(`INSERT OR IGNORE INTO profile (id, name, title, bio) VALUES (1, 'Iqbal Hameed', 'Software and AI Engineer', 'A passionate developer crafting digital experiences that push the boundaries of what is possible on the web.')`).run();
+  await client.execute(`INSERT OR IGNORE INTO profile (id, name, title, bio) VALUES (1, 'Iqbal Hameed', 'Software and AI Engineer', 'A passionate developer crafting digital experiences that push the boundaries of what is possible on the web.')`);
 
   // Seed Admin
-  const adminExists = db.prepare('SELECT id FROM admin WHERE username = ?').get('admin');
-  if (!adminExists) {
+  const adminRes = await client.execute({
+    sql: 'SELECT id FROM admin WHERE username = ?',
+    args: ['admin']
+  });
+  if (adminRes.rows.length === 0) {
     const hash = bcryptjs.hashSync('admin123', 10);
-    db.prepare('INSERT INTO admin (username, password) VALUES (?, ?)').run('admin', hash);
+    await client.execute({
+      sql: 'INSERT INTO admin (username, password) VALUES (?, ?)',
+      args: ['admin', hash]
+    });
   }
 
   // Seed Skills
-  const skillCount = db.prepare('SELECT count(*) as count FROM skills').get();
-  if (skillCount.count === 0) {
-    const insertSkill = db.prepare('INSERT INTO skills (name, category, proficiency) VALUES (?, ?, ?)');
-    insertSkill.run('JavaScript', 'Frontend', 90);
-    insertSkill.run('Python', 'Backend', 85);
-    insertSkill.run('React', 'Frontend', 88);
+  const skillCount = await client.execute('SELECT count(*) as count FROM skills');
+  if (skillCount.rows[0].count === 0) {
+    await client.execute({
+      sql: 'INSERT INTO skills (name, category, proficiency) VALUES (?, ?, ?)',
+      args: ['JavaScript', 'Frontend', 90]
+    });
+    await client.execute({
+      sql: 'INSERT INTO skills (name, category, proficiency) VALUES (?, ?, ?)',
+      args: ['Python', 'Backend', 85]
+    });
+    await client.execute({
+      sql: 'INSERT INTO skills (name, category, proficiency) VALUES (?, ?, ?)',
+      args: ['React', 'Frontend', 88]
+    });
   }
 
-  return db;
+  console.log("Database initialization completed!");
+}
+
+if (require.main === module) {
+  initDB().catch(console.error).finally(() => process.exit(0));
 }
 
 module.exports = initDB;
