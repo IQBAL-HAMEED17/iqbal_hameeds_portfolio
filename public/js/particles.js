@@ -4,16 +4,17 @@ class ParticleSystem {
         this.scene = threeScene.scene;
         this.camera = threeScene.camera;
         this.mouse = threeScene.mouse;
+        this.isMobile = threeScene.isMobile;
         this.mouseTrail = [];
         this.ambientParticles = [];
         this.burstParticles = [];
-        this.trailCount = 40;
-        this.ambientCount = 80;
-        this.connectionDistance = 3;
+        this.trailCount = this.isMobile ? 15 : 40;
+        this.ambientCount = this.isMobile ? 30 : 80;
+        this.connectionDistance = this.isMobile ? 2 : 3;
 
         this.initMouseTrail();
         this.initAmbientParticles();
-        this.initConnectionLines();
+        if (!this.isMobile) this.initConnectionLines();
         this.initClickBurst();
     }
 
@@ -112,7 +113,8 @@ class ParticleSystem {
         const worldPos = this.camera.position.clone().add(dir.multiplyScalar(dist));
 
         const colors = ['#00f0ff', '#7b2fff', '#ff2d95'];
-        for (let i = 0; i < 25; i++) {
+        const burstCount = this.isMobile ? 10 : 25;
+        for (let i = 0; i < burstCount; i++) {
             const tex = this.createGlowTexture(colors[Math.floor(Math.random() * colors.length)]);
             const mat = new THREE.SpriteMaterial({
                 map: tex, transparent: true, opacity: 1,
@@ -167,31 +169,33 @@ class ParticleSystem {
         }
 
         // Constellation connections
-        const posAttr = this.constellationLines.geometry.getAttribute('position');
-        const colAttr = this.constellationLines.geometry.getAttribute('color');
-        let lineCount = 0;
-        const maxLines = 200;
-        const cyanCol = new THREE.Color(0x00f0ff);
+        if (!this.isMobile && this.constellationLines) {
+            const posAttr = this.constellationLines.geometry.getAttribute('position');
+            const colAttr = this.constellationLines.geometry.getAttribute('color');
+            let lineCount = 0;
+            const maxLines = 200;
+            const cyanCol = new THREE.Color(0x00f0ff);
 
-        for (let i = 0; i < this.ambientCount && lineCount < maxLines; i++) {
-            for (let j = i + 1; j < this.ambientCount && lineCount < maxLines; j++) {
-                const a = this.ambientParticles[i].mesh.position;
-                const b = this.ambientParticles[j].mesh.position;
-                const d = a.distanceTo(b);
-                if (d < this.connectionDistance) {
-                    const idx = lineCount * 6;
-                    posAttr.array[idx] = a.x; posAttr.array[idx + 1] = a.y; posAttr.array[idx + 2] = a.z;
-                    posAttr.array[idx + 3] = b.x; posAttr.array[idx + 4] = b.y; posAttr.array[idx + 5] = b.z;
-                    const op = 1 - d / this.connectionDistance;
-                    colAttr.array[idx] = cyanCol.r * op; colAttr.array[idx + 1] = cyanCol.g * op; colAttr.array[idx + 2] = cyanCol.b * op;
-                    colAttr.array[idx + 3] = cyanCol.r * op; colAttr.array[idx + 4] = cyanCol.g * op; colAttr.array[idx + 5] = cyanCol.b * op;
-                    lineCount++;
+            for (let i = 0; i < this.ambientCount && lineCount < maxLines; i++) {
+                for (let j = i + 1; j < this.ambientCount && lineCount < maxLines; j++) {
+                    const a = this.ambientParticles[i].mesh.position;
+                    const b = this.ambientParticles[j].mesh.position;
+                    const d = a.distanceTo(b);
+                    if (d < this.connectionDistance) {
+                        const idx = lineCount * 6;
+                        posAttr.array[idx] = a.x; posAttr.array[idx + 1] = a.y; posAttr.array[idx + 2] = a.z;
+                        posAttr.array[idx + 3] = b.x; posAttr.array[idx + 4] = b.y; posAttr.array[idx + 5] = b.z;
+                        const op = 1 - d / this.connectionDistance;
+                        colAttr.array[idx] = cyanCol.r * op; colAttr.array[idx + 1] = cyanCol.g * op; colAttr.array[idx + 2] = cyanCol.b * op;
+                        colAttr.array[idx + 3] = cyanCol.r * op; colAttr.array[idx + 4] = cyanCol.g * op; colAttr.array[idx + 5] = cyanCol.b * op;
+                        lineCount++;
+                    }
                 }
             }
+            this.constellationLines.geometry.setDrawRange(0, lineCount * 2);
+            posAttr.needsUpdate = true;
+            colAttr.needsUpdate = true;
         }
-        this.constellationLines.geometry.setDrawRange(0, lineCount * 2);
-        posAttr.needsUpdate = true;
-        colAttr.needsUpdate = true;
 
         // Burst particles
         for (let i = this.burstParticles.length - 1; i >= 0; i--) {

@@ -1,10 +1,11 @@
 // ThreeScene — Cosmic 3D world with bloom post-processing, vortex portal, orbit rings
 class ThreeScene {
     constructor() {
+        this.isMobile = window.innerWidth < 768 || ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
         this.container = document.getElementById('three-canvas');
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+        this.renderer = new THREE.WebGLRenderer({ antialias: !this.isMobile, alpha: true, powerPreference: 'high-performance' });
         this.composer = null;
         this.mouse = { x: 0, y: 0, targetX: 0, targetY: 0 };
         this.clock = new THREE.Clock();
@@ -22,7 +23,7 @@ class ThreeScene {
 
     init() {
         this.renderer.setSize(window.innerWidth, window.innerHeight);
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        this.renderer.setPixelRatio(this.isMobile ? 1 : Math.min(window.devicePixelRatio, 2));
         this.renderer.setClearColor(0x050510, 1);
         this.renderer.toneMapping = THREE.ReinhardToneMapping;
         this.renderer.toneMappingExposure = 1.5;
@@ -30,9 +31,9 @@ class ThreeScene {
 
         this.camera.position.z = 5;
 
-        // Post-processing BLOOM (graceful fallback if CDN didn't load)
+        // Post-processing BLOOM (graceful fallback if CDN didn't load, disabled on mobile)
         try {
-            if (THREE.EffectComposer && THREE.RenderPass && THREE.UnrealBloomPass) {
+            if (!this.isMobile && THREE.EffectComposer && THREE.RenderPass && THREE.UnrealBloomPass) {
                 this.composer = new THREE.EffectComposer(this.renderer);
                 this.composer.addPass(new THREE.RenderPass(this.scene, this.camera));
                 const bloomPass = new THREE.UnrealBloomPass(
@@ -82,7 +83,7 @@ class ThreeScene {
     }
 
     createStarField() {
-        const count = 5000;
+        const count = this.isMobile ? 800 : 5000;
         const geo = new THREE.BufferGeometry();
         const positions = new Float32Array(count * 3);
         const colors = new Float32Array(count * 3);
@@ -119,14 +120,16 @@ class ThreeScene {
     }
 
     createNebula() {
-        const configs = [
+        let configs = [
             { color: 0x7b2fff, pos: [5, 5, -15], scale: [2, 1, 1.5], opacity: 0.04 },
             { color: 0x00f0ff, pos: [-8, -2, -20], scale: [1.5, 2, 1], opacity: 0.03 },
             { color: 0xff2d95, pos: [0, 8, -25], scale: [2.5, 1, 1.5], opacity: 0.025 },
             { color: 0x2d7bff, pos: [-5, -8, -18], scale: [1.8, 1.2, 1], opacity: 0.03 },
             { color: 0x7b2fff, pos: [10, -3, -22], scale: [1, 2, 1.5], opacity: 0.025 },
         ];
-        const geo = new THREE.SphereGeometry(12, 32, 32);
+        if (this.isMobile) configs = configs.slice(0, 2);
+        
+        const geo = new THREE.SphereGeometry(12, 16, 16);
 
         configs.forEach(cfg => {
             const mat = new THREE.MeshBasicMaterial({
@@ -142,7 +145,7 @@ class ThreeScene {
     }
 
     createVortex() {
-        const count = 3000;
+        const count = this.isMobile ? 600 : 3000;
         const geo = new THREE.BufferGeometry();
         const positions = new Float32Array(count * 3);
         const colors = new Float32Array(count * 3);
@@ -190,8 +193,9 @@ class ThreeScene {
             new THREE.DodecahedronGeometry(0.4, 0),
         ];
         const clrs = [0x00f0ff, 0x7b2fff, 0xff2d95, 0x2d7bff];
+        const count = this.isMobile ? 6 : 20;
 
-        for (let i = 0; i < 20; i++) {
+        for (let i = 0; i < count; i++) {
             const geo = geoTypes[Math.floor(Math.random() * geoTypes.length)];
             const color = clrs[Math.floor(Math.random() * clrs.length)];
             const mat = new THREE.MeshBasicMaterial({
